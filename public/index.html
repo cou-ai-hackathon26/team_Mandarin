@@ -1,1 +1,1059 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TicketX | নিরাপদ টিকেট রিসেলিং মার্কেটপ্লেস</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css?v=4.0">
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+</head>
+<body>
+
+  <!-- Minimalist Top Bar -->
+  <div class="top-bar">
+    <div class="container top-bar-inner">
+      <div class="top-bar-left">
+        <span class="trust-pill">🛡️ ফেয়ার প্রাইস গ্যারান্টি (নো-স্ক্যাল্পিং)</span>
+        <span class="trust-pill">🔐 ম্যানুয়াল অ্যাডমিন ভেরিফিকেশন ও নিরাপত্তা</span>
+      </div>
+      <div class="top-bar-right">
+        <button class="top-btn" onclick="openAiConfigModal()" title="এআই ইঞ্জিন কনফিগার করুন">
+          🤖 AI সেটিংস
+        </button>
+        <button class="top-btn" onclick="toggleAppMode()" id="appModeTogglePill" title="মোবাইল ফ্রেম ভিউ">
+          📱 অ্যাপ ভিউ
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Navigation Header -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand-group" onclick="switchMainTab('explore')">
+        <span class="logo-icon">🎫</span>
+        <div class="logo-text">
+          <span class="brand-name">Ticket<span class="text-accent">X</span></span>
+          <span class="brand-tag">Safe Resell</span>
+        </div>
+      </div>
+
+      <!-- Main Navigation Tabs -->
+      <nav class="main-nav">
+        <button class="nav-tab active" id="navTabExplore" onclick="switchMainTab('explore')">
+          🔍 এক্সপ্লোর
+        </button>
+        <button class="nav-tab" id="navTabUserDashboard" onclick="switchMainTab('userDashboard')" style="display: none;">
+          📊 আমার ড্যাশবোর্ড <span class="badge" id="userDashboardBadge" style="display: none;">০</span>
+        </button>
+        <button class="nav-tab admin-tab" id="navTabAdminDashboard" onclick="switchMainTab('adminDashboard')" style="display: none;">
+          🛡️ এডমিন ড্যাশবোর্ড <span class="badge badge-admin" id="adminDashboardBadge" style="display: none;">০</span>
+        </button>
+        <button class="nav-tab" id="navTabTrust" onclick="switchMainTab('trust')">
+          ⭐ ট্রাস্ট ও রিভিউ
+        </button>
+      </nav>
+
+      <!-- Header Right Controls -->
+      <div class="header-right">
+        <!-- Logged Out Auth Button -->
+        <button class="btn btn-outline btn-sm" id="btnHeaderAuth" onclick="openAuthModal('login')">
+          🔑 লগইন / সাইন আপ
+        </button>
+
+        <!-- Logged In Notification Bell -->
+        <button class="header-notif-btn" id="headerNotifBtn" onclick="openNotificationsModal()" title="নোটিফিকেশনস" style="display: none;">
+          <span id="headerNotifIcon">🔔</span>
+          <span class="header-notif-count" id="headerNotifCount" style="display: none;">০</span>
+        </button>
+
+        <!-- Logged In User Profile Chip -->
+        <div class="user-chip-button" id="userProfileChip" onclick="handleUserChipClick()" title="প্রোফাইল ও ড্যাশবোর্ড" style="display: none;">
+          <span class="user-chip-icon" id="userChipAvatar">👤</span>
+          <div class="user-chip-text">
+            <span id="currentUserNameDisplay">ব্যবহারকারী</span>
+            <small id="currentUserRoleDisplay">সাধারণ ইউজার</small>
+          </div>
+        </div>
+
+        <!-- Logged In Logout Button -->
+        <button class="btn btn-outline btn-sm" id="btnHeaderLogout" onclick="logout()" title="লগআউট" style="display: none;">
+          🚪 লগআউট
+        </button>
+
+        <!-- Sell Ticket CTA -->
+        <button class="btn btn-primary btn-sm btn-sell-cta" onclick="handleSellCtaClick()">
+          ➕ টিকেট বিক্রি
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Clean, Punchy Hero Section -->
+  <section class="hero-section">
+    <div class="container hero-content">
+      <div class="hero-center">
+        <div class="hero-pill">✨ আসল মূল্যে নিরাপদ টিকেট রিসেলিং প্ল্যাটফর্ম</div>
+        <h1 class="hero-title">আসল মূল্যে নিশ্চিন্তে <span class="gradient-text">টিকেট কিনুন ও বিক্রি করুন</span></h1>
+        <p class="hero-subtitle">
+          বাস, ট্রেন, সিনেমা ও কনসার্টের শতভাগ ভেরিফাইড টিকিট। জিরো-স্ক্যাল্পিং ফেয়ার প্রাইস, এআই ফ্রড শিল্ড এবং অ্যাডমিন নিরাপত্তা সমন্বয়।
+        </p>
+
+        <!-- Compact Professional Search Bar -->
+        <div class="search-bar">
+          <div class="search-input-box">
+            <span class="search-icon">🔎</span>
+            <input type="text" id="searchInput" placeholder="গন্তব্য, রুট, পরিবহন বা সিনেমার নাম লিখে খুঁজুন..." oninput="handleSearch(this.value)">
+          </div>
+          <button class="btn btn-primary" onclick="applyFilters()">অনুসন্ধান</button>
+        </div>
+
+        <div class="hero-trust-chips">
+          <span>✓ মূল মূল্যের চেয়ে কম বা সমান দাম</span>
+          <span>✓ রিয়েল AI ভিশন ও OCR অডিট</span>
+          <span>✓ অ্যাডমিন মধ্যস্থতায় সুরক্ষিত লেনদেন</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main App Content Container -->
+  <main class="container mb-8">
+
+    <!-- ==================== TAB 1: EXPLORE CATALOG ==================== -->
+    <div id="tabExplore" class="tab-pane active">
+      <!-- Category Filters & Toggles -->
+      <div class="catalog-header" id="explore">
+        <div class="category-tabs" id="categoryPillsContainer">
+          <!-- Rendered dynamically via JS -->
+        </div>
+
+        <div class="catalog-actions">
+          <label class="ai-filter-toggle">
+            <input type="checkbox" id="aiSafeFilter" onchange="applyFilters()">
+            <span class="toggle-switch"></span>
+            <span class="toggle-label">🛡️ শুধুমাত্র ৯৫%+ AI ভেরিফাইড</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="ticket-grid" id="ticketCardsGrid">
+        <!-- Ticket Cards rendered dynamically via JS -->
+      </div>
+    </div>
+
+    <!-- ==================== TAB 2: USER DASHBOARD ==================== -->
+    <div id="tabUserDashboard" class="tab-pane" style="display: none;">
+      <div class="dashboard-card-wrap">
+        <div class="dashboard-header-bar">
+          <div class="dashboard-title-area">
+            <h2>📊 আমার ইউজার ড্যাশবোর্ড</h2>
+            <p>আপনার টিকিট লিস্টিং, প্রাপ্ত অফার, ক্রয় অনুরোধ এবং সার্বিক লেনদেন কার্যকলাপ ট্র্যাক করুন।</p>
+          </div>
+          <div>
+            <button class="btn btn-primary btn-sm" onclick="openSellTicketModal()">➕ নতুন টিকিট পোস্ট করুন</button>
+          </div>
+        </div>
+
+        <!-- User Dashboard Sub-Navigation Tabs -->
+        <div class="dash-subnav-pills">
+          <button type="button" class="dash-pill-btn active" id="userSubTabProfile" onclick="showUserSubTab('profile')">
+            👤 আমার প্রোফাইল
+          </button>
+          <button type="button" class="dash-pill-btn" id="userSubTabListed" onclick="showUserSubTab('listed')">
+            📋 সক্রিয় টিকিট <span class="dash-badge" id="userListedCountBadge">০</span>
+          </button>
+          <button type="button" class="dash-pill-btn" id="userSubTabPending" onclick="showUserSubTab('pending')">
+            ⏳ মুলতুবি টিকিট <span class="dash-badge" id="userPendingCountBadge">০</span>
+          </button>
+          <button type="button" class="dash-pill-btn" id="userSubTabOffers" onclick="showUserSubTab('offers')">
+            💬 আমার অফারসমূহ <span class="dash-badge" id="userOffersCountBadge">০</span>
+          </button>
+          <button type="button" class="dash-pill-btn" id="userSubTabRequests" onclick="showUserSubTab('requests')">
+            ⚡ ক্রয় অনুরোধ (Buy Now) <span class="dash-badge" id="userRequestsCountBadge">০</span>
+          </button>
+          <button type="button" class="dash-pill-btn" id="userSubTabTransactions" onclick="showUserSubTab('transactions')">
+            💼 লেনদেন ইতিহাস <span class="dash-badge" id="userTransactionsCountBadge">০</span>
+          </button>
+          <button type="button" class="dash-pill-btn" id="userSubTabNotifications" onclick="showUserSubTab('notifications')">
+            🔔 নোটিফিকেশন <span class="dash-badge" id="userNotificationsCountBadge">০</span>
+          </button>
+        </div>
+
+        <!-- Sub-Pane 1: Profile -->
+        <div id="userSubPaneProfile" class="user-subpane">
+          <div class="user-profile-box">
+            <div class="profile-avatar-side">
+              <div class="profile-avatar-circle" id="userProfileAvatarChar">U</div>
+              <h3 id="userProfileNameText" style="margin: 0; font-size: 1.15rem; color: #0f172a;">-</h3>
+              <span class="trust-pill" id="userProfileTrustBadgeText">Verified User</span>
+            </div>
+            <div class="profile-details-grid">
+              <div class="profile-field-card">
+                <div class="profile-field-label">মোবাইল ফোন</div>
+                <div class="profile-field-val" id="userProfilePhoneText">-</div>
+              </div>
+              <div class="profile-field-card">
+                <div class="profile-field-label">ইমেইল ঠিকানা</div>
+                <div class="profile-field-val" id="userProfileEmailText">-</div>
+              </div>
+              <div class="profile-field-card">
+                <div class="profile-field-label">ইউজার রেটিং</div>
+                <div class="profile-field-val text-green" id="userProfileRatingText">⭐ ৫.০ (১ রিভিউ)</div>
+              </div>
+              <div class="profile-field-card">
+                <div class="profile-field-label">সম্পন্ন লেনদেন</div>
+                <div class="profile-field-val" id="userProfileDealsText">০ টি সফল ডিল</div>
+              </div>
+              <div class="profile-field-card">
+                <div class="profile-field-label">অ্যাকাউন্টের ধরন</div>
+                <div class="profile-field-val text-accent">রেগুলার মেম্বার (ক্রেতা ও বিক্রেতা)</div>
+              </div>
+              <div class="profile-field-card">
+                <div class="profile-field-label">নিবন্ধন তারিখ</div>
+                <div class="profile-field-val" id="userProfileCreatedText">-</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sub-Pane 2: My Listed Tickets (Available & Reserved) -->
+        <div id="userSubPaneListed" class="user-subpane" style="display: none;">
+          <div class="pane-header mb-3">
+            <div>
+              <h4 style="margin: 0;">📋 আমার সক্রিয় টিকিটসমূহ</h4>
+              <small class="text-muted">অ্যাডমিন কর্তৃক অনুমোদিত টিকিট যা বর্তমানে মার্কেটপ্লেসে প্রদর্শিত হচ্ছে।</small>
+            </div>
+          </div>
+          <div class="dash-items-grid" id="userListedTicketsList">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
+
+        <!-- Sub-Pane 3: My Pending Tickets (Under Review or Rejected) -->
+        <div id="userSubPanePending" class="user-subpane" style="display: none;">
+          <div class="pane-header mb-3">
+            <div>
+              <h4 style="margin: 0;">⏳ অ্যাডমিন অনুমোদনের অপেক্ষায় ও পর্যালোচিত টিকিট</h4>
+              <small class="text-muted">আপনার আপলোডকৃত টিকিটসমূহ যা বর্তমানে অ্যাডমিন পর্যালোচনাধীন রয়েছে অথবা নীতিমালার কারণে প্রত্যাখ্যাত হয়েছে।</small>
+            </div>
+          </div>
+          <div class="dash-items-grid" id="userPendingTicketsList">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
+
+        <!-- Sub-Pane 4: My Offers (Received & Sent) -->
+        <div id="userSubPaneOffers" class="user-subpane" style="display: none;">
+          <div class="deals-layout-mvp">
+            <div class="deals-pane">
+              <div class="pane-header">
+                <div>
+                  <h4 style="margin: 0;">📩 আপনার টিকিটে প্রাপ্ত অফারসমূহ</h4>
+                  <small>ক্রেতাদের পাঠানো অফার গ্রহণ বা প্রত্যাখ্যান করুন</small>
+                </div>
+              </div>
+              <div class="deals-list" id="userReceivedOffersList">
+                <!-- Received offers rendered via JS -->
+              </div>
+            </div>
+
+            <div class="deals-pane">
+              <div class="pane-header">
+                <div>
+                  <h4 style="margin: 0;">📤 আপনার প্রেরিত অফারসমূহ</h4>
+                  <small>অন্যান্য সেলারদের কাছে আপনার পাঠানো অফারের বর্তমান স্ট্যাটাস</small>
+                </div>
+              </div>
+              <div class="deals-list" id="userSentOffersList">
+                <!-- Sent offers rendered via JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sub-Pane 5: Purchase Requests (Buy Now) -->
+        <div id="userSubPaneRequests" class="user-subpane" style="display: none;">
+          <div class="deals-layout-mvp">
+            <div class="deals-pane">
+              <div class="pane-header">
+                <div>
+                  <h4 style="margin: 0;">⚡ আপনার টিকিটে প্রাপ্ত Buy Now অনুরোধ</h4>
+                  <small>সরাসরি মূল্যে ক্রয় অনুরোধ নিশ্চিত বা বাতিল করুন</small>
+                </div>
+              </div>
+              <div class="deals-list" id="userReceivedRequestsList">
+                <!-- Received Buy Now requests rendered via JS -->
+              </div>
+            </div>
+
+            <div class="deals-pane">
+              <div class="pane-header">
+                <div>
+                  <h4 style="margin: 0;">⚡ আপনার প্রেরিত Buy Now অনুরোধ</h4>
+                  <small>সেলার কনফার্মেশনের পর অ্যাডমিন যোগাযোগ করবে</small>
+                </div>
+              </div>
+              <div class="deals-list" id="userSentRequestsList">
+                <!-- Sent Buy Now requests rendered via JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sub-Pane 6: Transactions History -->
+        <div id="userSubPaneTransactions" class="user-subpane" style="display: none;">
+          <div class="pane-header mb-3">
+            <div>
+              <h4 style="margin: 0;">💼 লেনদেন ইতিহাস ও অগ্রগতি</h4>
+              <small class="text-muted">অ্যাডমিন সমন্বয়ে চলমান এবং সম্পন্ন হওয়া আপনার সকল লেনদেন।</small>
+            </div>
+          </div>
+          <div class="dash-items-grid" id="userTransactionsList">
+            <!-- Transactions rendered via JS -->
+          </div>
+        </div>
+
+        <!-- Sub-Pane 7: Notifications -->
+        <div id="userSubPaneNotifications" class="user-subpane" style="display: none;">
+          <div class="pane-header mb-3 flex-between">
+            <div>
+              <h4 style="margin: 0;">🔔 আপনার নোটিফিকেশনস</h4>
+              <small class="text-muted">টিকেট অনুমোদন, অফার ও ডিল সম্পর্কিত বার্তা।</small>
+            </div>
+            <button class="btn btn-outline btn-sm" onclick="markAllNotificationsAsRead()">সব পড়া হয়েছে মার্ক করুন</button>
+          </div>
+          <div class="notif-feed" id="userNotificationsFeed">
+            <!-- Notifications rendered via JS -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ==================== TAB 3: ADMIN DASHBOARD ==================== -->
+    <div id="tabAdminDashboard" class="tab-pane" style="display: none;">
+      <div class="dashboard-card-wrap">
+        <div class="dashboard-header-bar">
+          <div class="dashboard-title-area">
+            <h2>🛡️ প্ল্যাটফর্ম অ্যাডমিন ড্যাশবোর্ড</h2>
+            <p>সিস্টেম পরিসংখ্যান, টিকিট পর্যালোচনা, ম্যানুয়াল লেনদেন সমন্বয় এবং ব্যবহারকারী পরিচালনা।</p>
+          </div>
+          <div>
+            <span class="trust-pill" style="background: #fef2f2; color: #dc2626; border-color: #fca5a5;">🔒 অ্যাডমিন প্রিভিলেজ সক্রিয়</span>
+          </div>
+        </div>
+
+        <!-- Admin Sub-Navigation Tabs -->
+        <div class="dash-subnav-pills">
+          <button type="button" class="dash-pill-btn active" id="adminSubTabOverview" onclick="showAdminSubTab('overview')">
+            📊 পরিসংখ্যান ও সারসংক্ষেপ
+          </button>
+          <button type="button" class="dash-pill-btn" id="adminSubTabTickets" onclick="showAdminSubTab('tickets')">
+            📋 টিকিট পর্যালোচনা <span class="dash-badge" id="adminPendingReviewBadge">০</span>
+          </button>
+          <button type="button" class="dash-pill-btn" id="adminSubTabTransactions" onclick="showAdminSubTab('transactions')">
+            💼 লেনদেন পরিচালনা <span class="dash-badge" id="adminPendingTrxBadge">০</span>
+          </button>
+          <button type="button" class="dash-pill-btn" id="adminSubTabUsers" onclick="showAdminSubTab('users')">
+            👥 ব্যবহারকারী তালিকা <span class="dash-badge" id="adminTotalUsersBadge">০</span>
+          </button>
+          <button type="button" class="dash-pill-btn" id="adminSubTabNotifications" onclick="showAdminSubTab('notifications')">
+            🔔 অ্যাডমিন নোটিফিকেশন <span class="dash-badge" id="adminAlertBadge">০</span>
+          </button>
+        </div>
+
+        <!-- Admin Sub-Pane 1: Overview -->
+        <div id="adminSubPaneOverview" class="admin-subpane">
+          <div class="admin-top-stats">
+            <div class="stat-card">
+              <span class="stat-title">👥 নিবন্ধিত ইউজার</span>
+              <strong class="stat-value text-accent" id="adminStatTotalUsers">০</strong>
+            </div>
+            <div class="stat-card">
+              <span class="stat-title">🎫 মোট লিস্টিং টিকিট</span>
+              <strong class="stat-value" id="adminStatTotalTickets">০</strong>
+            </div>
+            <div class="stat-card">
+              <span class="stat-title">⏳ পর্যালোচনার অপেক্ষায়</span>
+              <strong class="stat-value text-amber" id="adminStatPendingTickets">০</strong>
+            </div>
+            <div class="stat-card">
+              <span class="stat-title">✓ অনুমোদিত টিকিট</span>
+              <strong class="stat-value text-green" id="adminStatApprovedTickets">০</strong>
+            </div>
+            <div class="stat-card">
+              <span class="stat-title">✕ প্রত্যাখ্যাত টিকিট</span>
+              <strong class="stat-value text-red" id="adminStatRejectedTickets">০</strong>
+            </div>
+            <div class="stat-card">
+              <span class="stat-title">🔄 চলমান লেনদেন (ডিল)</span>
+              <strong class="stat-value text-accent" id="adminStatPendingTransactions">০</strong>
+            </div>
+            <div class="stat-card">
+              <span class="stat-title">🎉 সম্পন্ন লেনদেন</span>
+              <strong class="stat-value text-green" id="adminStatCompletedTransactions">০</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Admin Sub-Pane 2: Ticket Review -->
+        <div id="adminSubPaneTickets" class="admin-subpane" style="display: none;">
+          <div class="pane-header mb-3">
+            <div>
+              <h4 style="margin: 0;">🔍 মুলতুবি টিকিটসমূহ — AI রিপোর্ট ও ইমেজ পর্যালোচনা</h4>
+              <small class="text-muted">টিকিটের আসল ছবি ও এআই যাচাইকরণ রিপোর্ট দেখে অনুমোদন বা প্রত্যাখ্যান করুন।</small>
+            </div>
+          </div>
+          <div class="dash-items-grid" id="adminPendingTicketsGrid">
+            <!-- Pending tickets rendered via JS -->
+          </div>
+        </div>
+
+        <!-- Admin Sub-Pane 3: Transaction Management -->
+        <div id="adminSubPaneTransactions" class="admin-subpane" style="display: none;">
+          <div class="pane-header mb-3">
+            <div>
+              <h4 style="margin: 0;">💼 ম্যানুয়াল লেনদেন সমন্বয় ও নিয়ন্ত্রণ</h4>
+              <small class="text-muted">সেলার ও বায়ারের সাথে ফোনে যোগাযোগ করে টিকিট হস্তান্তরের কাজ পরিচালনা করুন।</small>
+            </div>
+          </div>
+          <div class="dash-items-grid" id="adminTransactionsGrid">
+            <!-- Transactions rendered via JS -->
+          </div>
+        </div>
+
+        <!-- Admin Sub-Pane 4: User Management -->
+        <div id="adminSubPaneUsers" class="admin-subpane" style="display: none;">
+          <div class="pane-header mb-3">
+            <div>
+              <h4 style="margin: 0;">👥 সকল নিবন্ধিত সাধারণ ব্যবহারকারী</h4>
+              <small class="text-muted">প্ল্যাটফর্ম ব্যবহারকারীদের প্রোফাইল ও কার্যকলাপ পর্যবেক্ষণ করুন।</small>
+            </div>
+          </div>
+          <div class="table-responsive">
+            <table class="admin-custom-table" id="adminUsersTable">
+              <thead>
+                <tr>
+                  <th>নাম</th>
+                  <th>মোবাইল নম্বর</th>
+                  <th>ইমেইল</th>
+                  <th>রেটিং</th>
+                  <th>সম্পন্ন ডিল</th>
+                  <th>স্ট্যাটাস</th>
+                </tr>
+              </thead>
+              <tbody id="adminUsersTableBody">
+                <!-- User rows rendered via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Admin Sub-Pane 5: Notifications -->
+        <div id="adminSubPaneNotifications" class="admin-subpane" style="display: none;">
+          <div class="pane-header mb-3 flex-between">
+            <div>
+              <h4 style="margin: 0;">🔔 অ্যাডমিন নোটিফিকেশনস ও অ্যালার্ট</h4>
+              <small class="text-muted">নতুন টিকিট জমা বা ডিল কনফার্মেশন সম্পর্কিত লাইভ বার্তা।</small>
+            </div>
+            <button class="btn btn-outline btn-sm" onclick="markAllNotificationsAsRead()">সব পড়া হয়েছে মার্ক করুন</button>
+          </div>
+          <div class="notif-feed" id="adminNotificationsFeed">
+            <!-- Admin notifications rendered via JS -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ==================== TAB 4: TRUST & REVIEWS ==================== -->
+    <div id="tabTrust" class="tab-pane" style="display: none;">
+      <div class="trust-container">
+        <div class="trust-header">
+          <h2>⭐ বায়ার ও সেলার ট্রাস্ট স্কোর</h2>
+          <p>প্রতিটি সফল লেনদেনের পর উভয় পক্ষ রেটিং দিতে পারেন। বিশ্বস্ত ব্যবহারকারীদের জন্য বিশেষ ট্রাস্ট ব্যাজ।</p>
+        </div>
+
+        <div class="trust-grid" id="trustProfilesGrid">
+          <!-- Profiles rendered via JS -->
+        </div>
+
+        <div class="reviews-box mt-4">
+          <h3>💬 কমিউনিটি রিভিউ ও অভিজ্ঞতা</h3>
+          <div class="reviews-list" id="reviewsFeedContainer">
+            <!-- Reviews rendered via JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- 1. Proper Authentication Modal (User Login, Signup & Admin Login) -->
+  <div class="modal-overlay" id="authModal" style="display: none;">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-icon">🔐</span>
+          <div>
+            <h3 id="authModalTitle">অ্যাকাউন্টে প্রবেশ করুন</h3>
+            <small>নিরাপদ টিকেট রিসেলিংয়ে অংশ নিন</small>
+          </div>
+        </div>
+        <button class="modal-close" onclick="closeModal('authModal')">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="auth-role-tabs">
+          <button type="button" class="auth-role-tab active" id="tabBtnLogin" onclick="switchAuthModalTab('login')">
+            👤 সাইন ইন (Login)
+          </button>
+          <button type="button" class="auth-role-tab" id="tabBtnSignup" onclick="switchAuthModalTab('signup')">
+            📝 নতুন অ্যাকাউন্ট (Sign Up)
+          </button>
+          <button type="button" class="auth-role-tab" id="tabBtnAdmin" onclick="switchAuthModalTab('admin')">
+            🛡️ প্ল্যাটফর্ম অ্যাডমিন
+          </button>
+        </div>
+
+        <!-- FORM 1: User Login -->
+        <form id="formUserLogin" onsubmit="handleUserLoginSubmit(event)">
+          <div class="form-field">
+            <label>মোবাইল ফোন নম্বর অথবা ইমেইল *</label>
+            <input type="text" id="loginIdentifierInput" class="input-field" placeholder="যেমন: +8801711223344 বা rahim@ticketx.com" required>
+            <small class="field-hint">ডেমো অ্যাকাউন্ট: <code>+8801711223344</code> (পাসওয়ার্ড: <code>user123</code>)</small>
+          </div>
+          <div class="form-field mt-3">
+            <label>পাসওয়ার্ড *</label>
+            <input type="password" id="loginPasswordInput" class="input-field" placeholder="আপনার পাসওয়ার্ড লিখুন" required>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block mt-4" id="btnLoginSubmit">
+            🔑 সাইন ইন করুন
+          </button>
+        </form>
+
+        <!-- FORM 2: User Sign Up -->
+        <form id="formUserSignup" onsubmit="handleUserSignupSubmit(event)" style="display: none;">
+          <div class="form-field">
+            <label>আপনার পূর্ণ নাম *</label>
+            <input type="text" id="signupNameInput" class="input-field" placeholder="যেমন: তানভীর আহমেদ" required>
+          </div>
+          <div class="form-field mt-3">
+            <label>মোবাইল ফোন নম্বর *</label>
+            <input type="tel" id="signupPhoneInput" class="input-field" placeholder="যেমন: +88017XXXXXXXX" required>
+            <small class="field-hint">অ্যাডমিন টিকিট সমন্বয়ের জন্য এই নম্বরে যোগাযোগ করবেন।</small>
+          </div>
+          <div class="form-field mt-3">
+            <label>ইমেইল ঠিকানা (ঐচ্ছিক)</label>
+            <input type="email" id="signupEmailInput" class="input-field" placeholder="name@example.com">
+          </div>
+          <div class="form-field mt-3">
+            <label>পাসওয়ার্ড * (কমপক্ষে ৬ অক্ষর)</label>
+            <input type="password" id="signupPasswordInput" class="input-field" placeholder="কমপক্ষে ৬ অক্ষরের পাসওয়ার্ড" minlength="6" required>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block mt-4" id="btnSignupSubmit">
+            📝 অ্যাকাউন্ট তৈরি করুন
+          </button>
+        </form>
+
+        <!-- FORM 3: Platform Admin Login -->
+        <form id="formAdminLogin" onsubmit="handleAdminLoginSubmit(event)" style="display: none;">
+          <div class="admin-login-box">
+            <div class="form-field">
+              <label>কনফিগারকৃত অ্যাডমিন ইমেইল *</label>
+              <input type="email" id="adminEmailInput" class="input-field" placeholder="admin@ticketx.com" required>
+              <small class="field-hint">পরিবেশ ভেরিয়েবল <code>ADMIN_EMAIL</code> অনুযায়ী</small>
+            </div>
+            <div class="form-field mt-3">
+              <label>অ্যাডমিন পাসওয়ার্ড *</label>
+              <input type="password" id="adminPasswordInput" class="input-field" placeholder="অ্যাডমিন পাসওয়ার্ড" required>
+              <small class="field-hint">পরিবেশ ভেরিয়েবল <code>ADMIN_PASSWORD</code> অনুযায়ী</small>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block mt-4" id="btnAdminLoginSubmit">
+              🛡️ অ্যাডমিন ড্যাশবোর্ডে প্রবেশ করুন
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Sell Ticket Modal (Preserved with Strict AI Verification) -->
+  <div class="modal-overlay" id="sellTicketModal" style="display: none;">
+    <div class="modal-box modal-lg">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-icon">➕</span>
+          <div>
+            <h3>টিকিট বিক্রি করুন (AI অডিট ও অনুমোদন সাপেক্ষে)</h3>
+            <small>অ্যান্টি-স্ক্যাল্পিং নিয়ম: বিক্রির দাম মুদ্রিত মূল্যের বেশি হতে পারবে না</small>
+          </div>
+        </div>
+        <button class="modal-close" onclick="closeModal('sellTicketModal')">✕</button>
+      </div>
+
+      <form id="sellTicketForm" onsubmit="handleSellTicketSubmit(event)">
+        <div class="modal-body modal-scroll">
+
+          <!-- Category Selection -->
+          <div class="form-field">
+            <label>টিকেটের ধরন (Category) *</label>
+            <select id="newTicketCategory" class="input-field" onchange="handleCategoryFieldChange(this.value)" required>
+              <option value="bus">🚌 বাসের টিকিট (Bus)</option>
+              <option value="train">🚆 ট্রেনের টিকিট (Train - Bangladesh Railway)</option>
+              <option value="movie">🎬 সিনেমার টিকিট (Star Cineplex / Hall)</option>
+              <option value="event">🎸 কনসার্ট ও ইভেন্ট (Concerts & Events)</option>
+            </select>
+          </div>
+
+          <!-- Title & Operator -->
+          <div class="form-row-2">
+            <div class="form-field">
+              <label>টিকেটের শিরোনাম (Route / Event Title) *</label>
+              <input type="text" id="newTicketTitle" class="input-field" placeholder="যেমন: ঢাকা ➔ কক্সবাজার (গ্রীন লাইন)" required>
+            </div>
+            <div class="form-field">
+              <label>অপারেটর / ট্রেনের নাম / মুভি হল *</label>
+              <input type="text" id="newTicketOperator" class="input-field" placeholder="যেমন: Green Line / মহানগর গোধূলী" required>
+            </div>
+          </div>
+
+          <!-- Date & Time -->
+          <div class="form-row-2">
+            <div class="form-field">
+              <label>যাত্রার / শো-এর তারিখ *</label>
+              <input type="date" id="newTicketDate" class="input-field" required>
+            </div>
+            <div class="form-field">
+              <label>সময় (Time) *</label>
+              <input type="text" id="newTicketTime" class="input-field" placeholder="যেমন: 10:30 PM বা 03:30 PM" required>
+            </div>
+          </div>
+
+          <!-- Seats & Route Points -->
+          <div class="form-row-3">
+            <div class="form-field">
+              <label>আসন তথ্য (Seat Info) *</label>
+              <input type="text" id="newTicketSeats" class="input-field" placeholder="যেমন: B2, B3 বা CHAIR-5" required>
+            </div>
+            <div class="form-field">
+              <label>বোর্ডিং পয়েন্ট / ভেন্যু</label>
+              <input type="text" id="newTicketBoarding" class="input-field" placeholder="যেমন: সায়েদাবাদ / বসুন্ধরা সিটি">
+            </div>
+            <div class="form-field">
+              <label>গন্তব্য (Destination)</label>
+              <input type="text" id="newTicketDrop" class="input-field" placeholder="যেমন: কক্সবাজার / চট্টগ্রাম">
+            </div>
+          </div>
+
+          <!-- Pricing with Anti-Scalping Constraint -->
+          <div class="pricing-card-box">
+            <div class="pricing-card-header">
+              <span>💰 ফেয়ার প্রাইসিং ও অ্যান্টি-স্ক্যাল্পিং নীতি</span>
+              <small class="badge badge-green">মূল্য নিয়ন্ত্রণ বাধ্যতামূলক</small>
+            </div>
+            <div class="form-row-2 mt-2">
+              <div class="form-field">
+                <label>টিকিটের আসল মুদ্রিত মূল্য (Original Price ৳) *</label>
+                <input type="number" id="newTicketOriginalPrice" class="input-field" placeholder="যেমন: 1800" required oninput="validateScalpingRule()">
+                <small class="field-hint">টিকিটে যে দাম লেখা আছে ঠিক তাই দিন।</small>
+              </div>
+              <div class="form-field">
+                <label>আপনার বিক্রয় মূল্য (Asking Price ৳) *</label>
+                <input type="number" id="newTicketAskingPrice" class="input-field" placeholder="যেমন: 1600" required oninput="validateScalpingRule()">
+                <small class="field-hint">সর্বোচ্চ সীমা = মূল মুদ্রিত মূল্য।</small>
+              </div>
+            </div>
+            <div id="scalpingAlertMsg" class="scalping-alert"></div>
+          </div>
+
+          <!-- Flexible Offer Options -->
+          <div class="offer-toggle-card mt-3">
+            <div class="toggle-row">
+              <div>
+                <strong>ক্রেতাদের জন্য প্রাইস অফার (দরদাম) সুবিধা চালু রাখুন</strong>
+                <p>ক্রেতারা একটি নির্দিষ্ট রেঞ্জের মধ্যে তাদের অফার প্রস্তাব করতে পারবে।</p>
+              </div>
+              <input type="checkbox" id="newTicketAllowOffers" checked onchange="toggleMinOfferField(this.checked)">
+            </div>
+            <div class="form-field mt-2" id="minOfferWrap">
+              <label>সর্বনিম্ন গ্রহণযোগ্য অফার মূল্য (৳ যেমন: 1400)</label>
+              <input type="number" id="newTicketMinOffer" class="input-field" placeholder="ন্যূনতম কত হলে অফার গ্রহণ করবেন">
+            </div>
+          </div>
+
+          <!-- Additional Notes -->
+          <div class="form-field mt-3">
+            <label>অতিরিক্ত নোট / বিবরণ (ঐচ্ছিক)</label>
+            <input type="text" id="newTicketNotes" class="input-field" placeholder="যেমন: জরুরি কারণে যেতে পারছি না, মূল কাউন্টার থেকে কেনা।">
+          </div>
+
+          <!-- Ticket Image Upload & Strict Real AI Verification -->
+          <div class="upload-section mt-3">
+            <div class="upload-header">
+              <span class="upload-label">🔒 আসল টিকিটের ছবি / ই-টিকিট স্ক্রিনশট *</span>
+              <span class="privacy-pill">গোপনীয়: শুধুমাত্র অ্যাডমিন ভেরিফাই করবেন</span>
+            </div>
+
+            <div class="drop-zone" id="fileDropArea" onclick="document.getElementById('ticketFileInput').click()">
+              <input type="file" id="ticketFileInput" accept="image/*,.pdf" style="display: none;" onchange="handleTicketFileSelect(event)">
+              <div id="dropContentPlaceholder">
+                <span class="drop-icon">📤</span>
+                <p>টিকিটের ছবি সিলেক্ট করতে ক্লিক করুন (PNG, JPG, PDF)</p>
+              </div>
+              <div id="ticketPreviewWrap" style="display: none;" class="preview-box">
+                <img id="ticketPreviewImg" src="" alt="Ticket Preview">
+                <span class="preview-tag">🔒 সংরক্ষিত আসল কপি</span>
+              </div>
+            </div>
+
+            <!-- Live AI Progress -->
+            <div class="ai-progress-box" id="aiScanWidget" style="display: none;">
+              <div class="ai-progress-status">
+                <span id="aiScanStatusTitle">🤖 রিয়েল এআই স্ক্যানিং চলছে...</span>
+                <div class="progress-bar-bg">
+                  <div class="progress-bar-fill" id="aiScanProgressBar"></div>
+                </div>
+              </div>
+              <ul class="ai-mini-logs" id="aiScanLogsList"></ul>
+            </div>
+
+            <!-- Live Real AI Result & One-Click Auto-Fill -->
+            <div id="aiLiveResultBox" style="display: none;" class="ai-result-card mt-3">
+              <div class="ai-result-top">
+                <span class="ai-result-badge" id="aiResultBadge">✅ AI ভিশন রিকগনিশন সফল</span>
+                <span id="aiLiveEngineBadge" class="engine-badge">Online Vision AI</span>
+              </div>
+
+              <div class="ai-result-metrics mt-2">
+                <div><small>অপারেটর:</small> <strong id="aiExtractedOperator">-</strong></div>
+                <div><small>পিএনআর / সিরিয়াল:</small> <strong id="aiExtractedPnr">-</strong></div>
+                <div><small>তারিখ ও সময়:</small> <strong id="aiExtractedDate">-</strong></div>
+                <div><small>আসন:</small> <strong id="aiExtractedSeats">-</strong></div>
+                <div><small>আসল মূল্য:</small> <strong id="aiExtractedPrice" class="text-green">-</strong></div>
+                <div><small>AI সেফটি স্কোর:</small> <strong id="aiExtractedScore" class="text-green">-</strong></div>
+              </div>
+
+              <!-- AI Analysis Bullet points -->
+              <div id="aiAnalysisPointsWrap" class="mt-2" style="font-size: 0.725rem; background: rgba(255,255,255,0.85); padding: 8px 10px; border-radius: 6px; border: 1px solid #e2e8f0;">
+                <ul id="aiAnalysisPointsList" style="margin: 0; padding-left: 18px; color: #334155; line-height: 1.4;"></ul>
+              </div>
+
+              <!-- Live Extracted OCR Raw Text Display -->
+              <div class="raw-ocr-box mt-2" id="aiRawOcrWrap" style="display: none;">
+                <small style="color: #047857; font-weight: 700; display: block; margin-bottom: 2px;">📄 টিকেট থেকে পঠিত আসল টেক্সট (Live Neural OCR):</small>
+                <div id="aiRawOcrText" style="background: #ffffff; padding: 6px 8px; border-radius: 4px; font-family: monospace; font-size: 0.725rem; color: #1e293b; max-height: 60px; overflow-y: auto; border: 1px dashed #86efac; white-space: pre-wrap; word-break: break-all;"></div>
+              </div>
+
+              <div class="ai-autofill-btn-wrap mt-3">
+                <button type="button" id="aiAutoFillBtn" class="btn btn-success btn-sm btn-block" onclick="applyAiAutoFill()">
+                  ✨ এআই তথ্য দিয়ে ফর্ম পূরণ করুন (Auto-Fill Form)
+                </button>
+              </div>
+              <div class="ai-autolist-wrap mt-2">
+                <button type="button" id="aiAutoListBtn" class="btn btn-primary btn-sm btn-block" onclick="handleAutoListing()">
+                  ⚡ অটো লিস্টিং (Auto Listing)
+                </button>
+                <small class="field-hint" style="display:block;margin-top:4px;">এআই যে তথ্য পড়তে পেরেছে সেটা দিয়ে টিকিট এখনই লাইভ হবে। যে তথ্য পাওয়া যায়নি সেই অংশ ফাঁকা থাকবে। অ্যাডমিন পরে রিভিউ করবেন।</small>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeModal('sellTicketModal')">বাতিল</button>
+          <button type="submit" id="btnSubmitSellTicket" class="btn btn-primary">
+            🚀 পর্যালোচনার জন্য জমা দিন (Submit for Approval)
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 3. Make an Offer Modal (Buyer Bidding) -->
+  <div class="modal-overlay" id="offerModal" style="display: none;">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-icon">💬</span>
+          <div>
+            <h3>প্রাইস অফার পাঠান</h3>
+            <small id="offerModalTicketTitle">টিকিটের নাম</small>
+          </div>
+        </div>
+        <button class="modal-close" onclick="closeModal('offerModal')">✕</button>
+      </div>
+
+      <form id="offerForm" onsubmit="handleOfferSubmit(event)">
+        <input type="hidden" id="offerTicketId">
+        <div class="modal-body">
+          <div class="price-context">
+            <div>
+              <small>মূল প্রিন্ট মূল্য</small>
+              <strong id="offerModalOrigPrice">৳০</strong>
+            </div>
+            <div>
+              <small>সেলারের চাওয়া দাম</small>
+              <strong id="offerModalAskPrice" class="text-accent">৳০</strong>
+            </div>
+          </div>
+
+          <div class="form-field mt-3">
+            <label>আপনার অফার মূল্য (৳) *</label>
+            <input type="number" id="offerAmountInput" class="input-field" placeholder="যেমন: 1200" required oninput="validateOfferAmount()">
+            <small id="offerFeedbackText" class="hint-text">সেলারের সর্বনিম্ন সীমার মধ্যে অফার দিন।</small>
+          </div>
+
+          <div class="form-field mt-3">
+            <label>সেলারকে বার্তা (ঐচ্ছিক)</label>
+            <input type="text" id="offerNoteInput" class="input-field" placeholder="যেমন: ভাই কনফার্ম করলে আজকেই নিব।">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeModal('offerModal')">বাতিল</button>
+          <button type="submit" class="btn btn-primary" id="btnSubmitOffer">✉️ অফার পাঠান</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4. Buy Now Confirmation Modal -->
+  <div class="modal-overlay" id="buyNowModal" style="display: none;">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-icon">⚡</span>
+          <div>
+            <h3>Buy Now ক্রয় অনুরোধ নিশ্চিতকরণ</h3>
+            <small id="buyNowModalTicketTitle">টিকিটের নাম</small>
+          </div>
+        </div>
+        <button class="modal-close" onclick="closeModal('buyNowModal')">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="escrow-receipt">
+          <div class="receipt-row">
+            <span>টিকেট:</span>
+            <strong id="buyNowTicketName">-</strong>
+          </div>
+          <div class="receipt-row highlight">
+            <span>নির্ধারিত বিক্রয় মূল্য:</span>
+            <strong id="buyNowTicketPrice" class="text-accent">৳০</strong>
+          </div>
+          <small class="receipt-note">
+            💡 <strong>গুরুত্বপূর্ণ:</strong> Buy Now অনুরোধ পাঠালে সেলারের কাছে কনফার্মেশনের জন্য যাবে। সেলার নিশ্চিত করার পর প্ল্যাটফর্ম অ্যাডমিন সরাসরি উভয় পক্ষের সাথে ফোনে যোগাযোগ করে নিরাপদে টিকিট ও পেমেন্ট লেনদেন সম্পন্ন করবেন।
+          </small>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <input type="hidden" id="buyNowTicketId">
+        <button type="button" class="btn btn-outline" onclick="closeModal('buyNowModal')">বাতিল</button>
+        <button type="button" class="btn btn-success" id="btnConfirmBuyNow" onclick="submitBuyNowRequest()">
+          ✓ Buy Now অনুরোধ পাঠান
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Admin Reject Reason Modal -->
+  <div class="modal-overlay" id="rejectTicketModal" style="display: none;">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-icon">✕</span>
+          <div>
+            <h3>টিকিট প্রত্যাখ্যান কারণ</h3>
+            <small id="rejectModalTicketTitle">-</small>
+          </div>
+        </div>
+        <button class="modal-close" onclick="closeModal('rejectTicketModal')">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <input type="hidden" id="rejectTicketId">
+        <div class="form-field">
+          <label>প্রত্যাখ্যানের কারণ লিখুন *</label>
+          <textarea id="rejectTicketReasonInput" class="input-field" rows="3" placeholder="যেমন: আপলোডকৃত টিকিটের ছবির টেক্সট ঝাপসা বা মেয়াদোত্তীর্ণ।" required></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeModal('rejectTicketModal')">বাতিল</button>
+        <button type="button" class="btn btn-danger" onclick="submitAdminRejectTicket()">✕ প্রত্যাখ্যান নিশ্চিত করুন</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. Notifications Modal / Drawer -->
+  <div class="modal-overlay" id="notificationsModal" style="display: none;">
+    <div class="modal-box modal-lg">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-icon">🔔</span>
+          <div>
+            <h3>নোটিফিকেশনস ও বার্তা</h3>
+            <small>সকল সাম্প্রতিক আপডেট ও লেনদেন নোটিশ</small>
+          </div>
+        </div>
+        <button class="modal-close" onclick="closeModal('notificationsModal')">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="flex-between mb-3">
+          <span id="notifModalCountText" style="font-size: 0.825rem; color: #64748b;">সকল নোটিফিকেশন</span>
+          <button class="btn btn-outline btn-sm" onclick="markAllNotificationsAsRead()">সব পড়া হয়েছে মার্ক করুন</button>
+        </div>
+        <div id="notificationsModalFeed" style="max-height: 400px; overflow-y: auto;">
+          <!-- Rendered via JS -->
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeModal('notificationsModal')">বন্ধ করুন</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. View Original Document Modal (Protected) -->
+  <div class="modal-overlay" id="viewTicketModal" style="display: none;">
+    <div class="modal-box modal-lg">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-icon">🎟️</span>
+          <div>
+            <h3>আসল ভেরিফাইড টিকিট ডকুমেন্ট</h3>
+            <small id="viewTicketModalTitle">সুরক্ষিত কপি</small>
+          </div>
+        </div>
+        <button class="modal-close" onclick="closeModal('viewTicketModal')">✕</button>
+      </div>
+
+      <div class="modal-body text-center">
+        <div class="unlocked-banner" id="viewTicketBanner">
+          🔒 আসল ডকুমেন্টের কপি
+        </div>
+        <div class="ticket-frame mt-3">
+          <img id="unlockedTicketImg" src="" alt="Original Ticket" style="max-width: 100%; border-radius: 8px;">
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('viewTicketModal')">বন্ধ করুন</button>
+        <button class="btn btn-primary" onclick="window.print()">🖨️ প্রিন্ট / ডাউনলোড</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. AI Inspection Report Modal -->
+  <div class="modal-overlay" id="aiDetailsModal" style="display: none;">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-icon">🤖</span>
+          <div>
+            <h3>এআই ফ্রড ও সিকিউরিটি রিপোর্ট</h3>
+            <small id="aiModalTicketTitle">টিকেট সত্যতা অডিট</small>
+          </div>
+        </div>
+        <button class="modal-close" onclick="closeModal('aiDetailsModal')">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="ai-score-card">
+          <div class="ai-circle-score" id="aiModalScoreNum">৯৮%</div>
+          <div class="ai-score-meta">
+            <strong id="aiModalRiskLevel" class="text-green">✓ নিরাপদ (Low Scam Risk)</strong>
+            <p id="aiModalScamProb">স্ক্যামের ঝুঁকি ১.২% (স্বাভাবিক নিরাপদ সীমা)</p>
+            <small class="ai-engine-tag" id="aiModalEngineTag">⚡ Powered by Vision AI</small>
+          </div>
+        </div>
+
+        <div class="ai-metrics-2col mt-3">
+          <div><small>ডিটেক্টেড পিএনআর:</small> <strong id="aiModalDetectedPnr">-</strong></div>
+          <div><small>ফেয়ার প্রাইস অডিট:</small> <strong class="text-green" id="aiModalScalpingAudit">✓ পাস</strong></div>
+          <div><small>ডিজিটাল ফরম্যাট:</small> <strong class="text-green">✓ বৈধ ওয়াটারমার্ক</strong></div>
+          <div><small>ডুপ্লিকেট চেক:</small> <strong class="text-green">✓ ০ মিল (ক্লিন)</strong></div>
+        </div>
+
+        <div class="ai-logs-box mt-3">
+          <ul id="aiModalAnalysisList"></ul>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="closeModal('aiDetailsModal')">ঠিক আছে</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9. AI Engine Settings Modal -->
+  <div class="modal-overlay" id="aiConfigModal" style="display: none;">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-icon">🤖</span>
+          <div>
+            <h3>AI ইঞ্জিন সেটিংস</h3>
+            <small>মাল্টিমডেল ভিশন ও ফ্রড ডিটেকশন মডেল কনফিগার করুন</small>
+          </div>
+        </div>
+        <button class="modal-close" onclick="closeModal('aiConfigModal')">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="ai-config-info">
+          💡 TicketX এআই ফ্রড শিল্ড এবং ফ্রি ক্লাউড এনএলপি মডেল ব্যবহার করে টিকিটের বৈধতা ও পিএনআর শনাক্ত করে।
+        </div>
+
+        <div class="ai-engine-selector mt-3">
+          <label class="engine-option active" id="optEnginePollinations">
+            <input type="radio" name="aiEngineChoice" value="pollinations" checked onchange="handleEngineSelect('pollinations')">
+            <div class="engine-meta">
+              <strong>Pollinations Multimodal AI (Free Online Model)</strong>
+              <small>কোনো এপিআই কি প্রয়োজন নেই। সম্পূর্ণ ফ্রি ক্লাউড এআই মডেল।</small>
+            </div>
+            <span class="badge badge-green">সুপারিশকৃত</span>
+          </label>
+
+          <label class="engine-option mt-2" id="optEngineGemini">
+            <input type="radio" name="aiEngineChoice" value="gemini" onchange="handleEngineSelect('gemini')">
+            <div class="engine-meta">
+              <strong>Google Gemini 1.5 Flash Vision API (Official)</strong>
+              <small>গুগল এআই স্টুডিওর ফ্রি এপিআই কি ব্যবহার করতে পারেন।</small>
+            </div>
+            <span class="badge badge-accent">উচ্চ নির্ভুলতা</span>
+          </label>
+        </div>
+
+        <div class="form-field mt-3" id="geminiKeyFieldWrap" style="display: none;">
+          <label>Google Gemini API Key</label>
+          <input type="password" id="geminiApiKeyInput" class="input-field" placeholder="AIzaSy...">
+          <small class="field-hint">আপনার নিজস্ব কি দিন (ai.google.dev থেকে প্রাপ্ত)। এটি ব্রাউজারে সংরক্ষিত থাকবে।</small>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeModal('aiConfigModal')">বাতিল</button>
+        <button class="btn btn-primary" onclick="saveAiEngineSettings()">সংরক্ষণ করুন</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification Toast Container -->
+  <div id="toastNotificationContainer" class="toast-container"></div>
+
+  <!-- Core App Logic -->
+  <script src="app.js?v=4.0"></script>
+</body>
+</html>
 
